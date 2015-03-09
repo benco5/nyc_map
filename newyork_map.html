@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset=utf-8 />
-<title>A simple map</title>
+<title>New York Map</title>
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
@@ -11,46 +11,112 @@
   #map { position:absolute; top:0; bottom:0; width:100%; }
 </style>
 </head>
+
 <body>
+<!-- <link href='/stylesheets/custom.css' rel='stylesheet' /> -->
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
 
+<style>
+.menu-ui {
+  background:#fff;
+  position:absolute;
+  top:10px;right:10px;
+  z-index:1;
+  border-radius:3px;
+  width:120px;
+  border:1px solid rgba(0,0,0,0.4);
+  }
+  .menu-ui a {
+    font-size:13px;
+    color:#404040;
+    display:block;
+    margin:0;padding:0;
+    padding:10px;
+    text-decoration:none;
+    border-bottom:1px solid rgba(0,0,0,0.25);
+    text-align:center;
+    }
+    .menu-ui a:first-child {
+      border-radius:3px 3px 0 0;
+      }
+    .menu-ui a:last-child {
+      border:none;
+      border-radius:0 0 3px 3px;
+      }
+    .menu-ui a:hover {
+      background:#f8f8f8;
+      color:#404040;
+      }
+    .menu-ui a.active {
+      background:#3887BE;
+      color:#FFF;
+      }
+      .menu-ui a.active:hover {
+        background:#3074a4;
+        }
+</style>
+
+<nav id='menu-ui' class='menu-ui'></nav>
 <div id='map'></div>
 
 
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
+var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false}).setView([40.77, -73.975], 12);
+var layers = document.getElementById('menu-ui');
 
-var map = 
-	L.mapbox.map('map',
-		'benco.lclhe4g5',
-		{featureLayer: false})
-	.setView([40.77, -73.975],
-		12),
+var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
 
-    heat = L.heatLayer([], { maxZoom: 14 }).addTo(map);
+markerCoords = [];
 
-// var featureLayer = L.mapbox.featureLayer()
-// 	.loadURL('/data/central_park.geojson')
-// 	.addTo(map);
+featureLayer.on('ready', function() {
 
-var featureLayer = L.mapbox.featureLayer()
-	.loadURL('/data/random_newyork_markers.geojson');
+  featureLayer.eachLayer(function(l) {
+    lat = l._latlng.lat;
+    lng = l._latlng.lng;
+    markerCoords.push([lat, lng]);
+  });
 
-// We're just using a featureLayer to pull marker data from Mapbox -
-// this is not added to the map.
-var layer = featureLayer.on('ready', function() {
-
-    // // Zoom the map to the bounds of the markers.
-    // map.fitBounds(layer.getBounds());
-    
-    // Add each marker point to the heatmap.
-    layer.eachLayer(function(l) {
-        heat.addLatLng(l.getLatLng());
-    });
+  return markerCoords;
 });
 
+var heat = L.heatLayer(markerCoords, { maxZoom: 14 });
+
+
+addLayer(featureLayer,'Markers', 2);
+addLayer(heat,'Heatmap', 3);
+
+
+function addLayer(layer, name, zIndex) {
+    layer
+        // .setZIndex(zIndex)
+        .addTo(map);
+
+    // Create a simple layer switcher that
+    // toggles layers on and off.
+    var link = document.createElement('a');
+        link.href = '#';
+        link.className = 'active';
+        link.innerHTML = name;
+
+    link.onclick = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+            this.className = '';
+        } else {
+            map.addLayer(layer);
+            this.className = 'active';
+        }
+    };
+
+    layers.appendChild(link);
+}
 
 </script>
+
 
 </body>
 </html>
