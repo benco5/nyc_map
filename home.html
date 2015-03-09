@@ -63,6 +63,7 @@
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
 var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false}).setView([40.77, -73.975], 12);
+
 var layers = document.getElementById('menu-ui');
 
 var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
@@ -77,20 +78,16 @@ featureLayer.on('ready', function() {
     markerCoords.push([lat, lng]);
   });
 
-  return markerCoords;
+  var heat = L.heatLayer(markerCoords, { maxZoom: 14 }).addTo(map);
+
+  addLayer(featureLayer,'Markers');
+  addLayer(heat,'Heatmap');
 });
 
-var heat = L.heatLayer(markerCoords, { maxZoom: 14 });
 
-
-addLayer(featureLayer,'Markers', 2);
-addLayer(heat,'Heatmap', 3);
-
-
-function addLayer(layer, name, zIndex) {
-    layer
-        // .setZIndex(zIndex)
-        .addTo(map);
+function addLayer(layer, name) {
+    
+    layer.addTo(map);
 
     // Create a simple layer switcher that
     // toggles layers on and off.
