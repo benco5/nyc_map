@@ -148,7 +148,8 @@ featureLayer.on('mouseover',function(e) {
     e.layer.closePopup();
 
     var feature = e.layer.feature;
-    var content = '<div><strong>' + feature.properties.title + '</strong>' +
+    var title = feature.properties.title;
+    var content = '<div><strong>' + title + '</strong>' +
                   '<p>' + feature.properties.description + '</p></div>';
 
     info.innerHTML = content;
