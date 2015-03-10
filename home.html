@@ -6,7 +6,9 @@
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
-<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
+<!-- <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
+ --><script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
+
 <style>
   body { margin:0; padding:0; }
   #map { position:absolute; top:0; bottom:0; width:100%; }
@@ -108,10 +110,43 @@ featureLayer.on('ready', function() {
   addLayer(heat,'Heatmap');
 });
 
-// Get title of marker on mouseover
-// featureLayer.on('mouseover', function(e) {
-//   alert(e.layer.feature.properties.title); // e is an event object (MouseEvent in this case)
-// });
+// Listen for individual marker mousover events
+featureLayer.on('mouseover',function(e) {
+    // Force the popup closed.
+    e.layer.closePopup();
+
+    // Create and populate info box
+    var feature = e.layer.feature;
+    var currentMarkerTitle = feature.properties.title;
+    var content = '<div><strong>' + currentMarkerTitle + '</strong>' +
+                  '<p>' + feature.properties.description + '</p></div>';
+
+    info.innerHTML = content;
+});
+
+// Filter out markers that do not share hovered marker's title
+featureLayer.on('mouseover', function(e) {
+
+  var filterOnVal = e.layer.feature.properties.title;
+  
+  featureLayer.setFilter(function(f) {
+    return f.properties['title'] === filterOnVal;
+  });
+});
+
+// Bring back all markers upon leaving hovered marker
+map.on('mouseover', function() {
+  
+  featureLayer.setFilter(function() {
+    return true;
+  });
+});
+
+// Clear the info box when not hovering markers.
+featureLayer.on('mouseout', empty);
+
+// Trigger empty contents when the script has loaded on the page.
+empty();
 
 // Add layers with toggle functionality
 function addLayer(layer, name) {
@@ -141,29 +176,9 @@ function addLayer(layer, name) {
     layers.appendChild(link);
 }
 
-// Listen for individual marker mousover events
-featureLayer.on('mouseover',function(e) {
-    // Force the popup closed.
-    e.layer.closePopup();
-
-    var feature = e.layer.feature;
-    var title = feature.properties.title;
-    var content = '<div><strong>' + title + '</strong>' +
-                  '<p>' + feature.properties.description + '</p></div>';
-
-    info.innerHTML = content;
-});
-
-// Clear the tooltip when map is clicked.
-featureLayer.on('mouseout', empty);
-
-// Trigger empty contents when the script
-// has loaded on the page.
-empty();
-
 function empty() {
   info.innerHTML = '<div><strong>Hover over markers to explore!</strong></div>';
-  }
+};
 
 </script>
 
