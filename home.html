@@ -17,10 +17,22 @@
 <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
 
 <style>
+
+.info {
+  position:absolute;
+  top:10px;
+  right:10px;
+  }
+  .info div {
+    background:#fff;
+    padding:10px;
+    border-radius:3px;
+    }
+
 .menu-ui {
   background:#fff;
   position:absolute;
-  top:10px;right:10px;
+  top:100px;right:10px;
   z-index:1;
   border-radius:3px;
   width:120px;
@@ -56,22 +68,35 @@
         }
 </style>
 
-<nav id='menu-ui' class='menu-ui'></nav>
+<!-- Map -->
 <div id='map'></div>
+
+<!-- Marker info outside of tooltip -->
+<div id='info' class='info'></div>
+
+<!-- Layer toggle menu -->
+<nav id='menu-ui' class='menu-ui'></nav>
+
 
 
 <script>
+
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
-var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false}).setView([40.77, -73.975], 12);
+
+var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false} ).setView([40.77, -73.975], 12);
+
+var info = document.getElementById('info');
 
 var layers = document.getElementById('menu-ui');
 
 var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
 
-markerCoords = [];
 
 featureLayer.on('ready', function() {
 
+  markerCoords = [];
+
+  // Construct array of marker coordinates
   featureLayer.eachLayer(function(l) {
     lat = l._latlng.lat;
     lng = l._latlng.lng;
@@ -84,7 +109,12 @@ featureLayer.on('ready', function() {
   addLayer(heat,'Heatmap');
 });
 
+// Get title of marker on mouseover
+// featureLayer.on('mouseover', function(e) {
+//   alert(e.layer.feature.properties.title); // e is an event object (MouseEvent in this case)
+// });
 
+// Add layers with toggle functionality
 function addLayer(layer, name) {
     
     layer.addTo(map);
@@ -111,6 +141,29 @@ function addLayer(layer, name) {
 
     layers.appendChild(link);
 }
+
+// Listen for individual marker mousover events
+featureLayer.on('mouseover',function(e) {
+    // Force the popup closed.
+    e.layer.closePopup();
+
+    var feature = e.layer.feature;
+    var content = '<div><strong>' + feature.properties.title + '</strong>' +
+                  '<p>' + feature.properties.description + '</p></div>';
+
+    info.innerHTML = content;
+});
+
+// Clear the tooltip when map is clicked.
+featureLayer.on('mouseout', empty);
+
+// Trigger empty contents when the script
+// has loaded on the page.
+empty();
+
+function empty() {
+  info.innerHTML = '<div><strong>Hover over markers to explore!</strong></div>';
+  }
 
 </script>
 
