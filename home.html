@@ -6,8 +6,11 @@
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
 <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
-<!-- <script src='https://code.jquery.com/jquery-1.11.0.min.js'></script>
- --><script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
+ <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
+ <!-- 1. Load platform support before any code that touches the DOM. -->
+<script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+<!-- 2. Load the component using an HTML Import -->
+<link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
 
 <style>
   body { margin:0; padding:0; }
@@ -23,19 +26,22 @@
 
 .info {
   position:absolute;
-  top:10px;
-  right:10px;
+  top:150px;
+  left:18px;
   }
   .info div {
     background:#fff;
     padding:10px;
     border-radius:3px;
+    width:200px;
+    height:150px;
     }
 
 .menu-ui {
-  background:#fff;
+  background:#4F7DC9;
   position:absolute;
-  top:100px;right:10px;
+  top:340px;
+  left:70px;
   z-index:1;
   border-radius:3px;
   width:120px;
@@ -69,22 +75,56 @@
       .menu-ui a.active:hover {
         background:#3074a4;
         }
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: sans-serif;
+/*  color: #FFF;*/
+  margin: 0;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+[drawer] {
+  background: rgba(0, 0, 0, 0.8);
+  color: #3694d3;
+  border-right: 1px solid #ccc;
+}
+
+[main] {
+  background-color: #4F7DC9;
+}
+
+/*button {
+  width: 160px;
+  height: 40px;
+  font-size: 16px;
+  margin: 8px;
+}*/
+
 </style>
 
-<!-- Map -->
-<div id='map'></div>
-
-<!-- Marker info outside of tooltip -->
-<div id='info' class='info'></div>
-
-<!-- Layer toggle menu -->
-<nav id='menu-ui' class='menu-ui'></nav>
+<core-drawer-panel>
+  <div drawer>
+    <!-- Marker info outside of tooltip -->
+    <div id='info' class='info'></div>
+    <!-- Layer toggle menu -->
+    <nav id='menu-ui' class='menu-ui'></nav>
+  </div>
+  <div main>
+    <!-- Map -->
+    <div id='map'></div>
+  </div>
+</core-drawer-panel>
 
 <script>
 
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
 
-var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false} ).setView([40.77, -73.975], 12);
+var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false} ).setView([40.785, -73.90], 12);
 
 var info = document.getElementById('info');
 
@@ -137,13 +177,15 @@ featureLayer.on('mouseover', function(e) {
 // Bring back all markers upon leaving hovered marker
 map.on('mouseover', function() {
   
+  empty();
+
   featureLayer.setFilter(function() {
     return true;
   });
 });
 
 // Clear the info box when not hovering markers.
-featureLayer.on('mouseout', empty);
+// featureLayer.on('mouseout', empty);
 
 // Trigger empty contents when the script has loaded on the page.
 empty();

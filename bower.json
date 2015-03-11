@@ -1,0 +1,21 @@
+{
+  "name": "newyork_map",
+  "version": "0.0.0",
+  "authors": [
+    "Ben"
+  ],
+  "main": "home.html",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.5",
+    "core-drawer-panel": "Polymer/core-drawer-panel#~0.5.5"
+  }
+}
