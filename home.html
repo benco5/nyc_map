@@ -11,11 +11,9 @@
 <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
 <!-- 2. Load the component using an HTML Import -->
 <link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
+<link rel="import" href="bower_components/font-roboto/roboto.html">
+<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
 
-<style>
-  body { margin:0; padding:0; }
-  #map { position:absolute; top:0; bottom:0; width:100%; }
-</style>
 </head>
 
 <body>
@@ -23,6 +21,41 @@
 
 
 <style>
+
+html, body {
+  height: 100%;
+}
+
+#map { position:absolute; top:0; bottom:0; width:100%; }
+
+body {
+  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+/*  color: #FFF;*/
+  margin: 0;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+[drawer] {
+  background: rgba(0, 0, 0, 0.8);
+  color: #3694d3;
+  padding:24px;
+  border-right: 1px solid #ccc;
+}
+
+[main] {
+  background-color: #4F7DC9;
+}
+
+section {
+  width:125px;
+  margin-top:315px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+paper-toggle-button {
+  padding:8px;
+}
 
 .info {
   position:absolute;
@@ -76,43 +109,27 @@
         background:#3074a4;
         }
 
-
-html, body {
-  height: 100%;
-}
-
-body {
-  font-family: sans-serif;
-/*  color: #FFF;*/
-  margin: 0;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-[drawer] {
-  background: rgba(0, 0, 0, 0.8);
-  color: #3694d3;
-  border-right: 1px solid #ccc;
-}
-
-[main] {
-  background-color: #4F7DC9;
-}
-
-/*button {
-  width: 160px;
-  height: 40px;
-  font-size: 16px;
-  margin: 8px;
-}*/
-
 </style>
 
 <core-drawer-panel>
   <div drawer>
-    <!-- Marker info outside of tooltip -->
+      <!-- Marker info outside of tooltip -->
+
     <div id='info' class='info'></div>
     <!-- Layer toggle menu -->
-    <nav id='menu-ui' class='menu-ui'></nav>
+<!--     <nav id='menu-ui' class='menu-ui'></nav> -->
+
+    <section>
+      <div center horizontal layout>
+        <div flex>Markers</div>
+        <paper-toggle-button checked id='markersToggle'></paper-toggle-button>
+      </div>
+      <div center horizontal layout>
+        <div flex>Heatmap</div>
+        <paper-toggle-button checked id='heatmapToggle'></paper-toggle-button>
+      </div>
+    </section>
+
   </div>
   <div main>
     <!-- Map -->
@@ -128,7 +145,11 @@ var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false} ).setView([
 
 var info = document.getElementById('info');
 
-var layers = document.getElementById('menu-ui');
+// var layers = document.getElementById('menu-ui');
+
+var markersToggle = document.getElementById('markersToggle');
+
+var heatmapToggle = document.getElementById('heatmapToggle');
 
 var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
 
@@ -146,8 +167,10 @@ featureLayer.on('ready', function() {
 
   var heat = L.heatLayer(markerCoords, { maxZoom: 14 }).addTo(map);
 
-  addLayer(featureLayer,'Markers');
-  addLayer(heat,'Heatmap');
+  // addLayer(featureLayer,'Markers');
+  // addLayer(heat,'Heatmap');
+  addLayer(featureLayer, 'markersToggle');
+  addLayer(heat, 'heatmapToggle');
 });
 
 // Listen for individual marker mousover events
@@ -184,25 +207,20 @@ map.on('mouseover', function() {
   });
 });
 
-// Clear the info box when not hovering markers.
-// featureLayer.on('mouseout', empty);
-
 // Trigger empty contents when the script has loaded on the page.
 empty();
 
 // Add layers with toggle functionality
-function addLayer(layer, name) {
+function addLayer(layer, elementId) {
     
     layer.addTo(map);
 
     // Create a simple layer switcher that
     // toggles layers on and off.
-    var link = document.createElement('a');
-        link.href = '#';
-        link.className = 'active';
-        link.innerHTML = name;
+    var button = document.getElementById(elementId);
 
-    link.onclick = function(e) {
+
+    button.onclick = function(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -215,8 +233,36 @@ function addLayer(layer, name) {
         }
     };
 
-    layers.appendChild(link);
+    // layers.appendChild(link);
 }
+
+
+// function addLayer(layer, name) {
+    
+//     layer.addTo(map);
+
+//     // Create a simple layer switcher that
+//     // toggles layers on and off.
+//     var link = document.createElement('a');
+//         link.href = '#';
+//         link.className = 'active';
+//         link.innerHTML = name;
+
+//     link.onclick = function(e) {
+//         e.preventDefault();
+//         e.stopPropagation();
+
+//         if (map.hasLayer(layer)) {
+//             map.removeLayer(layer);
+//             this.className = '';
+//         } else {
+//             map.addLayer(layer);
+//             this.className = 'active';
+//         }
+//     };
+
+//     layers.appendChild(link);
+// }
 
 function empty() {
   info.innerHTML = '<div><strong>Hover over markers to explore!</strong></div>';
