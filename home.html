@@ -1,125 +1,89 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset=utf-8 />
-<title>New York Map</title>
-<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
-<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
- <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
- <!-- 1. Load platform support before any code that touches the DOM. -->
-<script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
-<!-- 2. Load the component using an HTML Import -->
-<link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
-<link rel="import" href="bower_components/font-roboto/roboto.html">
-<link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
-
+  <meta charset=utf-8 />
+  <title>New York Map</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
+  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
+  <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+  <link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
+  <link rel="import" href="bower_components/font-roboto/roboto.html">
+  <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
 </head>
 
 <body>
 <!-- <link href='/stylesheets/custom.css' rel='stylesheet' /> -->
 
-
 <style>
 
-html, body {
-  height: 100%;
-}
-
-#map { position:absolute; top:0; bottom:0; width:100%; }
-
-body {
-  font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
-/*  color: #FFF;*/
-  margin: 0;
-  -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-[drawer] {
-  background: rgba(0, 0, 0, 0.8);
-  color: #3694d3;
-  padding:24px;
-  border-right: 1px solid #ccc;
-}
-
-[main] {
-  background-color: #4F7DC9;
-}
-
-section {
-  width:125px;
-  margin-top:315px;
-  margin-left:auto;
-  margin-right:auto;
-}
-
-paper-toggle-button {
-  padding:8px;
-}
-
-.info {
-  position:absolute;
-  top:150px;
-  left:18px;
+  html, body {
+    height: 100%;
   }
-  .info div {
-    background:#fff;
-    padding:10px;
-    border-radius:3px;
-    width:200px;
-    height:150px;
-    }
 
-.menu-ui {
-  background:#4F7DC9;
-  position:absolute;
-  top:340px;
-  left:70px;
-  z-index:1;
-  border-radius:3px;
-  width:120px;
-  border:1px solid rgba(0,0,0,0.4);
+  #map {
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:100%;
   }
-  .menu-ui a {
-    font-size:13px;
-    color:#404040;
-    display:block;
-    margin:0;padding:0;
-    padding:10px;
-    text-decoration:none;
-    border-bottom:1px solid rgba(0,0,0,0.25);
-    text-align:center;
-    }
-    .menu-ui a:first-child {
-      border-radius:3px 3px 0 0;
-      }
-    .menu-ui a:last-child {
-      border:none;
-      border-radius:0 0 3px 3px;
-      }
-    .menu-ui a:hover {
-      background:#f8f8f8;
-      color:#404040;
-      }
-    .menu-ui a.active {
-      background:#3887BE;
-      color:#FFF;
-      }
-      .menu-ui a.active:hover {
-        background:#3074a4;
-        }
 
+  body {
+    font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+  /*  color: #FFF;*/
+    margin: 0;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+
+  }
+
+  [drawer] {
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding:24px;
+    border-right: 1px solid #ccc;
+  }
+
+  h1 {
+    font-size: 40px;
+    text-transform: uppercase;
+  }
+
+  [main] {
+    background: rgba(0, 0, 0, 0);
+  }
+
+  section {
+    width:125px;
+    margin-top:250px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  paper-toggle-button {
+    padding:8px;
+  }
+
+  .info {
+    position:absolute;
+    top:200px;
+    left:18px;
+    color: #3694d3;
+    }
+    .info div {
+      background:#fff;
+      padding:10px;
+      border-radius:3px;
+      width:200px;
+      height:150px;
+      }
 </style>
 
 <core-drawer-panel>
   <div drawer>
-      <!-- Marker info outside of tooltip -->
-
-    <div id='info' class='info'></div>
-    <!-- Layer toggle menu -->
-<!--     <nav id='menu-ui' class='menu-ui'></nav> -->
-
+      <h1 flex>NYC Map Title</h1>
     <section>
+      <div id='info' class='info'></div>
       <div center horizontal layout>
         <div flex>Markers</div>
         <paper-toggle-button checked id='markersToggle'></paper-toggle-button>
@@ -129,46 +93,39 @@ paper-toggle-button {
         <paper-toggle-button checked id='heatmapToggle'></paper-toggle-button>
       </div>
     </section>
-
   </div>
   <div main>
-    <!-- Map -->
     <div id='map'></div>
   </div>
 </core-drawer-panel>
 
 <script>
-
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
 
-var map = L.mapbox.map('map','benco.lclhe4g5', {featureLayer: false} ).setView([40.785, -73.90], 12);
+var map = L.mapbox.map('map','benco.lclhe4g5', { featureLayer: false, zoomControl: false }).setView([40.785, -73.90], 12);
+
+// Add zoom control at top-right of map
+new L.Control.Zoom({ position: 'topright' }).addTo(map);
 
 var info = document.getElementById('info');
-
-// var layers = document.getElementById('menu-ui');
-
 var markersToggle = document.getElementById('markersToggle');
-
 var heatmapToggle = document.getElementById('heatmapToggle');
-
 var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
 
-
 featureLayer.on('ready', function() {
-
+  // Construct array of marker coordinates
   markerCoords = [];
 
-  // Construct array of marker coordinates
   featureLayer.eachLayer(function(l) {
     lat = l._latlng.lat;
     lng = l._latlng.lng;
     markerCoords.push([lat, lng]);
   });
-
+  
+  // Construct heatmap layer and add to map
   var heat = L.heatLayer(markerCoords, { maxZoom: 14 }).addTo(map);
 
-  // addLayer(featureLayer,'Markers');
-  // addLayer(heat,'Heatmap');
+  // Add layers with button element id
   addLayer(featureLayer, 'markersToggle');
   addLayer(heat, 'heatmapToggle');
 });
@@ -215,10 +172,8 @@ function addLayer(layer, elementId) {
     
     layer.addTo(map);
 
-    // Create a simple layer switcher that
-    // toggles layers on and off.
+    // Create a simple layer switcher that toggles layers
     var button = document.getElementById(elementId);
-
 
     button.onclick = function(e) {
         e.preventDefault();
@@ -232,37 +187,7 @@ function addLayer(layer, elementId) {
             this.className = 'active';
         }
     };
-
-    // layers.appendChild(link);
 }
-
-
-// function addLayer(layer, name) {
-    
-//     layer.addTo(map);
-
-//     // Create a simple layer switcher that
-//     // toggles layers on and off.
-//     var link = document.createElement('a');
-//         link.href = '#';
-//         link.className = 'active';
-//         link.innerHTML = name;
-
-//     link.onclick = function(e) {
-//         e.preventDefault();
-//         e.stopPropagation();
-
-//         if (map.hasLayer(layer)) {
-//             map.removeLayer(layer);
-//             this.className = '';
-//         } else {
-//             map.addLayer(layer);
-//             this.className = 'active';
-//         }
-//     };
-
-//     layers.appendChild(link);
-// }
 
 function empty() {
   info.innerHTML = '<div><strong>Hover over markers to explore!</strong></div>';
