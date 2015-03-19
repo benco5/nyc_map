@@ -95,10 +95,9 @@
 
 <div id='map'></div>
 <div id='sidepanel'>
-  <div center vertical around-justified layout wrap>
+  <div center vertical layout wrap>
     <h1 center><span style="color:#0C77D7;">NYC </span>Map Title</h1>
   </div>
-
   <div id="layer-selectors" horizontal around-justified layout wrap>
     <div center horizontal layout wrap>
       <div class='toggle-label'>Markers</div>
@@ -123,6 +122,8 @@ new L.Control.Zoom({ position: 'topright' }).addTo(map);
 var info = document.getElementById('info');
 var markersToggle = document.getElementById('markersToggle');
 var heatmapToggle = document.getElementById('heatmapToggle');
+
+
 var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
 
 featureLayer.on('ready', function() {
