@@ -3,25 +3,19 @@
 <head>
   <meta charset=utf-8 />
   <title>New York Map</title>
-  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no'/>
   <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js'></script>
   <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css' rel='stylesheet' />
   <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-heat/v0.1.3/leaflet-heat.js'></script>
-  <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-minimap/v1.0.0/Control.MiniMap.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-minimap/v1.0.0/Control.MiniMap.css' rel='stylesheet'/>
   <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
-  <link rel="import" href="bower_components/core-drawer-panel/core-drawer-panel.html">
   <link rel="import" href="bower_components/font-roboto/roboto.html">
-  <link rel="import" href="bower_components/paper-toggle-button/paper-toggle-button.html">
-  <link rel="import" href="bower_components/paper-shadow/paper-shadow.html">
   <link rel="import" href="bower_components/paper-checkbox/paper-checkbox.html">
 
 </head>
 
 <body unresolved>
-<!-- <link href='/stylesheets/custom.css' rel='stylesheet' /> -->
 
-<style>
+<style shim-shadowdom>
 /* Palette URL: http://paletton.com/#uid=31U1a0kC5MG6x-l5FPVWPjQ+PpK */
 
   html, body {
@@ -56,7 +50,6 @@
 
   h1 {
     font-size:45px;
-/*  font-size:3.5em;*/
     text-transform: uppercase;
     color: #FF4900;
     padding:0em 0em, 0em, 2em;
@@ -74,14 +67,12 @@
     border-radius:3px;
     width:100%;
     height:250px;
-    /*font-size:1.4em;*/
     font-size:20px;
     text-align:center;
   }
 
   #layer-selectors {
     font-size:18px;
-/*  font-size:1.4em;*/
     font-weight:bold;
     color:#FEFFD2;
     text-transform: uppercase;
@@ -93,6 +84,7 @@
 
   paper-checkbox::shadow #checkbox.checked {
     background-color: rgba(0,0,0,0);
+    border-color: #FEFFD2;
   }
 
   paper-checkbox::shadow #checkbox {
@@ -124,12 +116,6 @@
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
 
 var map = L.mapbox.map('map','benco.lclhe4g5', { featureLayer: false, zoomControl: false }).setView([40.763, -73.99], 13)
-  
-  // Testing inset mini-map plugin
-  .on('ready', function() {
-          new L.Control.MiniMap(L.mapbox.tileLayer('examples.map-i86nkdio'))
-              .addTo(map);
-  });
 
 // Add zoom control at top-right of map
 new L.Control.Zoom({ position: 'topright' }).addTo(map);
