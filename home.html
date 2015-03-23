@@ -114,7 +114,7 @@
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoiYmVuY28iLCJhIjoibFR5OENaSSJ9.1FJH6zh7FgXL1c0t_eg5NA';
 
-var map = L.mapbox.map('map','benco.lclhe4g5', { featureLayer: false, zoomControl: false }).setView([40.763, -73.99], 13)
+var map = L.mapbox.map('map','benco.lhgcp30a', { zoomControl: false }).setView([40.763, -73.99], 13)
 
 // Add zoom control at top-right of map
 new L.Control.Zoom({ position: 'topright' }).addTo(map);
@@ -123,60 +123,83 @@ var info = document.getElementById('info');
 var markersToggle = document.getElementById('markersToggle');
 var heatmapToggle = document.getElementById('heatmapToggle');
 
+// Create tempLayer to load / hold local geojson
+var tempLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
 
-var featureLayer = L.mapbox.featureLayer().loadURL('/data/random_newyork_markers.geojson');
+tempLayer.on('ready', function (e) {
 
-featureLayer.on('ready', function() {
-  // Construct array of marker coordinates
-  markerCoords = [];
-
-  featureLayer.eachLayer(function(l) {
-    lat = l._latlng.lat;
-    lng = l._latlng.lng;
-    markerCoords.push([lat, lng]);
+  // Reset properties of tempLayer markers as desired
+  e.target.eachLayer(function(l) {
+    l.feature.properties['marker-color'] = '#000';
   });
-  
-  // Construct heatmap layer and add to map
-  var heat = L.heatLayer(markerCoords, { maxZoom: 14 }).addTo(map);
 
-  // Add layers with button element id
-  addLayer(featureLayer, 'markersToggle');
-  addLayer(heat, 'heatmapToggle');
+  // Grab tempLayer geojson
+  geojson = e.target.getGeoJSON();
+
+  // Apply geojson to featureLayer
+  featureLayer = L.mapbox.featureLayer().setGeoJSON(geojson);
+  
+  // Add in methods that reference featureLayer
+  addLayers();
+  featureMouseEvents();
 });
 
-// Listen for individual marker mousover events
-featureLayer.on('mouseover',function(e) {
-    // Force the popup closed.
-    e.layer.closePopup();
+var addLayers = function () {
 
-    // Create and populate info box
-    var feature = e.layer.feature;
-    var currentMarkerTitle = feature.properties.title;
-    var content = '<div><strong>' + currentMarkerTitle + '</strong>' +
-                  '<p>' + feature.properties.description + '</p></div>';
+    // Construct array of marker coordinates
+    markerCoords = [];
 
-    info.innerHTML = content;
-});
+    featureLayer.eachLayer(function(l) {
+      lat = l._latlng.lat;
+      lng = l._latlng.lng;
+      markerCoords.push([lat, lng]);
+    });
+    
+    // Construct heatmap layer and add to map
+    var heat = L.heatLayer(markerCoords, { maxZoom: 14 }).addTo(map);
 
-// Filter out markers that do not share hovered marker's title
-featureLayer.on('mouseover', function(e) {
+    // Add layers with button element id
+    addLayer(featureLayer, 'markersToggle');
+    addLayer(heat, 'heatmapToggle');
+};
 
-  var filterOnVal = e.layer.feature.properties.title;
-  
-  featureLayer.setFilter(function(f) {
-    return f.properties['title'] === filterOnVal;
+var featureMouseEvents = function () {
+
+  // Listen for individual marker mousover events
+  featureLayer.on('mouseover',function(e) {
+      // Force the popup closed.
+      e.layer.closePopup();
+
+      // Create and populate info box
+      var feature = e.layer.feature;
+      var currentMarkerTitle = feature.properties.title;
+      var content = '<div><strong>' + currentMarkerTitle + '</strong>' +
+                    '<p>' + feature.properties.description + '</p></div>';
+
+      info.innerHTML = content;
   });
-});
 
-// Bring back all markers upon leaving hovered marker
-map.on('mouseover', function() {
-  
-  empty();
+  // Filter out markers that do not share hovered marker's title
+  featureLayer.on('mouseover', function(e) {
 
-  featureLayer.setFilter(function() {
-    return true;
+    var filterOnVal = e.layer.feature.properties.title;
+    
+    featureLayer.setFilter(function(f) {
+      return f.properties['title'] === filterOnVal;
+    });
   });
-});
+
+  // Bring back all markers upon leaving hovered marker
+  map.on('mouseover', function() {
+    
+    empty();
+
+    featureLayer.setFilter(function() {
+      return true;
+    });
+  });
+
+};
 
 // Trigger empty contents when the script has loaded on the page.
 empty();
